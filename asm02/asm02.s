@@ -1,37 +1,47 @@
-section .bss
-input resb 3              ; reserve 3 bytes for input
-
-section .data
-valid_message db '1337', 0xA
-
-section .text
 global _start
 
+section .data
+nombre dd '1337',0
+
+section .bss
+inp resb 3
+
+section .text
+
 _start:
-    mov eax, 0           
-    mov edi, 0           
-    mov rsi, input       
-    mov edx, 2           
-    syscall
+mov eax, 0
+mov edi, 0
+mov rsi, inp
+mov edx, 3
+syscall
 
-    mov eax, 1          
 
-    ; Compare input to "42"
-    movzx edi, word [input]
-    cmp edi, 0x3432      
-    jne exit_failure
+mov al, [inp]
+cmp al, 0x34
+jne not_equal
 
-    ; If input is "42"
-    mov edi, 1           
-    mov rsi, valid_message
-    mov edx, 5        
-    syscall
 
-    xor edi, edi        
-    mov eax, 60          
-    syscall
+mov al, [inp + 1]
+cmp al, 0x32
+jne not_equal
 
-exit_failure:
-    mov edi, 1          
-    mov eax, 60         
-    syscall
+
+mov al, [inp + 2]
+cmp al, 0x0A
+jne not_equal
+
+
+mov rax, 1
+mov rdi, 1
+mov rsi, nombre
+mov rdx, 4
+syscall
+
+mov rax, 60
+mov rdi, 0
+syscall
+
+not_equal:
+mov rax, 60
+mov rdi, 1
+syscall
