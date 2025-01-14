@@ -1,33 +1,37 @@
 section .bss
-    input resb 3
+input resb 3              ; reserve 3 bytes for input
 
 section .data
-    valid db '1337', 10
+valid_message db '1337', 0xA
 
 section .text
 global _start
 
 _start:
-    mov eax, 0
-    mov edi, 0
-    mov rsi, input
-    mov edx, 3
+    mov eax, 0           
+    mov edi, 0           
+    mov rsi, input       
+    mov edx, 2           
     syscall
 
-    cmp dword [input], '42'
-    jne wrong_input
+    mov eax, 1          
 
-    mov eax, 1
-    mov edi, 1
-    mov rsi, valid
-    mov edx, 5
+    ; Compare input to "42"
+    movzx edi, word [input]
+    cmp edi, 0x3432      
+    jne exit_failure
+
+    ; If input is "42"
+    mov edi, 1           
+    mov rsi, valid_message
+    mov edx, 5        
     syscall
 
-    mov eax, 60
-    xor edi, edi
+    xor edi, edi        
+    mov eax, 60          
     syscall
 
-wrong_input:
-    mov eax, 60
-    mov edi, 1
+exit_failure:
+    mov edi, 1          
+    mov eax, 60         
     syscall

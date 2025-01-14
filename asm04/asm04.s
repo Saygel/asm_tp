@@ -3,42 +3,50 @@ global _start
 section .data
 
 section .bss
-    input resb 11
+    inp resb 11
 
 section .text
 _start:
-    mov eax, 0
-    mov edi, 0
-    mov rsi, input
-    mov edx, 11
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, inp
+    mov rdx, 11
     syscall
 
-    mov rdi, input
+    mov rdi, inp
     add rdi, 10
 
-dernier:
+find_digit:
+    cmp rdi, inp
+    jl bad_input
+
     cmp byte [rdi], 0x30
-    jb verifier
+    jb skip_digit
     cmp byte [rdi], 0x39
-    ja verifier
-    jmp resultat            
+    ja skip_digit
+    jmp extract_digit
 
-verifier:
-    dec rdi                       
-    jmp dernier
+skip_digit:
+    dec rdi
+    jmp find_digit
 
-resultat:
-    movzx eax, byte [rdi]         
-    sub eax, '0'                  
+extract_digit:
+    movzx eax, byte [rdi]
+    sub eax, '0'
+    and eax, 1
+    jnz odd
 
-    and eax, 1                    
-    jnz impair                      
-
+even:
     mov rax, 60
     mov rdi, 0
     syscall
 
-impair:
+odd:
     mov rax, 60
     mov rdi, 1
+    syscall
+
+bad_input:
+    mov rax, 60
+    mov rdi, 2
     syscall
