@@ -1,46 +1,25 @@
-global _start
-
 section .data
-    number db '1337', 0x0A
+valid db '1337', 10
 
 section .text
+global _start
 
 _start:
-    mov rdi, [rsp]
-    cmp rdi, 1
-    je no_args
+    mov rdi, [rsp+8]          ; adresse du premier argument argv[1]
+    cmp dword [rdi], '42'     ; comparer à '42'
+    jne wrong_input
 
-    mov rsi, [rsp + 16]
-
-    mov al, [rsi]
-    cmp al, 0x34
-    jne not_42
-
-    mov al, [rsi + 1]
-    cmp al, 0x32
-    jne not_42
-
-    mov al, [rsi + 2]
-    cmp al, 0x00
-    jne not_42
-
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, number
-    mov rdx, 5
+    mov eax, 1
+    mov edi, 1
+    mov rsi, valid
+    mov edx, 5
     syscall
 
-
-    mov rax, 60
-    mov rdi, 0
+    mov eax, 60
+    xor edi, edi
     syscall
 
-not_42:
-    mov rax, 60
-    mov rdi, 1
-    syscall
-
-no_args:
-    mov rax, 60
-    mov rdi, 1
+wrong_input:
+    mov eax, 60
+    mov edi, 1
     syscall

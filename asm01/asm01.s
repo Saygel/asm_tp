@@ -1,17 +1,16 @@
-global _start
-
 section .data
-    number dd '1337'
+message db '1337', 10
 
 section .text
+global _start
 
 _start:
-    mov rax,1
-    mov rdi,1
-    mov rsi, number
-    mov rdx, 4
+    mov eax, 1
+    mov edi, 1
+    mov rsi, message
+    mov edx, 5
     syscall
 
-    mov rax,60
-    xor rdi,rdi
+    mov eax, 60
+    xor edi, edi
     syscall

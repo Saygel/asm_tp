@@ -1,8 +1,7 @@
+section .text
 global _start
 
-section .text
-
 _start:
-    mov rax, 60
-    mov rdi, 0
+    mov eax, 60
+    xor edi, edi
     syscall
